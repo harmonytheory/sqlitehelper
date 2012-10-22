@@ -1,0 +1,86 @@
+package @{sourcePackageName};
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+public abstract class ${sourceName}<T> extends @{helperBaseName} {
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+@foreach{beanHelper : beanHelperList}
+		@{beanHelper.name}.execCreateSql(db);
+@end{}
+	}
+
+	public abstract String getTable();
+
+	public abstract String[] getColumns();
+
+	public abstract T cursorToBean(Cursor c);
+
+	public abstract ContentValues beanToContentValues(T bean);
+
+	public List<T> selectAll(String order) {
+		Cursor c = query(getTable(), getColumns(), null, null, null, null, order, null);
+		List<T> list = new ArrayList<T>();
+		if (c.moveToFirst()) {
+			while (c.moveToNext()) {
+				list.add(cursorToBean(c));
+			}
+		}
+		return list;
+	}
+
+	@SuppressWarnings("unchecked")
+	public long insert(T bean) {
+        return insert(Arrays.asList(bean));
+	}
+	public long insert(List<T> beanList) {
+        SQLiteDatabase db = getWritableDatabase();
+        long insert = 0;
+        db.beginTransaction();
+        try {
+        	for (T bean : beanList) {
+        		insert = db.insert(getTable(), null, beanToContentValues(bean));
+        	}
+        	db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+        return insert;
+	}
+	public long insertOrThrow(T bean) {
+        return insertWithOnConflict(bean, SQLiteDatabase.CONFLICT_NONE);
+	}
+	public long insertOrThrow(List<T> beanList) {
+        return insertWithOnConflict(beanList, SQLiteDatabase.CONFLICT_NONE);
+	}
+	@SuppressWarnings("unchecked")
+	public long insertWithOnConflict(T bean, int conflictAlgorithm) {
+        return insertWithOnConflict(Arrays.asList(bean), conflictAlgorithm);
+	}
+	public long insertWithOnConflict(List<T> beanList, int conflictAlgorithm) {
+        SQLiteDatabase db = getWritableDatabase();
+        long insert = 0;
+        db.beginTransaction();
+        try {
+        	for (T bean : beanList) {
+        		insert = db.insertWithOnConflict(getTable(), null, beanToContentValues(bean), conflictAlgorithm);
+        	}
+        	db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+        return insert;
+	}
+	
+	public Cursor query(String table, String[] columns, String selection, 
+				String[] selectionArgs, String groupBy, String having,
+				String orderBy, String limit) {
+		return getWritableDatabase().query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+	}
+}
