@@ -1,3 +1,19 @@
+/*
+ * Copyright 2012 suppi~
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.harmonytheory.apt.scanner;
 
 import java.io.IOException;
@@ -17,7 +33,7 @@ import org.mvel2.templates.TemplateRuntime;
 
 /**
  * スキャナ基底クラス。
- * @author SPEEDY
+ * @author suppi~
  */
 public abstract class ScannerBase extends ElementScanner6<Void, Void> {
 	protected static ProcessingEnvironment prcEnv;
@@ -45,13 +61,21 @@ public abstract class ScannerBase extends ElementScanner6<Void, Void> {
 	}
 	
 	/**
+	 * 処理対象Elementクラスを取得する。
+	 * @return 処理対象Element
+	 */
+	public Element getClassElement() {
+		return classElement;
+	}
+	
+	/**
 	 * テンプレートクラス生成。
 	 * @return 各スキャナ用テンプレートクラス
 	 */
 	protected abstract TemplateBase getTemplate();
 	
 	/**
-	 * 。
+	 * ソース生成処理。
 	 */
 	public abstract void generate();
 	
@@ -83,7 +107,7 @@ public abstract class ScannerBase extends ElementScanner6<Void, Void> {
      * @param s  テキスト
      * @return 結果の文字列
      */
-    public String decamelize(final String s) {
+    protected String decamelize(final String s) {
         if (s == null) {
             return null;
         }

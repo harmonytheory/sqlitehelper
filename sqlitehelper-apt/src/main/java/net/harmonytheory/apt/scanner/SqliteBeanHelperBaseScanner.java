@@ -1,3 +1,19 @@
+/*
+ * Copyright 2012 suppi~
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.harmonytheory.apt.scanner;
 
 import java.util.ArrayList;
@@ -10,9 +26,23 @@ import javax.lang.model.element.Element;
 
 import net.harmonytheory.apt.annotation.SqliteBean;
 
+/**
+ * SqliteBeanHelper生成用クラス。
+ * ScannerBaseを継承しているが、クラスを走査はしていない。
+ * 前の処理でSqliteBeanScannerで処理したクラスをパラメータにして生成し、
+ * SqliteOpenHelperの継承クラスを生成する。
+ * @author suppi~
+ */
 public class SqliteBeanHelperBaseScanner extends ScannerBase {
+	/** 処理対象リスト。*/
 	private List<Element> elementList;
+	/** テンプレートクラス。*/
 	private SqliteHelperTemplate template;
+	/**
+	 * コンストラクタ。
+	 * 処理対象のBeanアノテーションが指定されたElementリストを指定する。
+	 * @param elementList 処理対象のBeanアノテーションが指定されたElementリスト
+	 */
 	private SqliteBeanHelperBaseScanner(List<Element> elementList) {
 		// とりあえず先頭かなぁ・・
 		super(elementList.get(0));

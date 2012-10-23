@@ -1,3 +1,19 @@
+/*
+ * Copyright 2012 suppi~
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.harmonytheory.apt.scanner;
 
 import java.util.ArrayList;
@@ -14,10 +30,12 @@ import net.harmonytheory.apt.annotation.SqliteBean;
 
 /**
  * SqliteBean用スキャナクラス。
- * @author SPEEDY
+ * @author suppi~
  */
 public class SqliteBeanScanner extends ScannerBase {
+	/** 自動生成するSqliteOpenHelperクラスの接尾辞。*/
 	public static final String POST_FIX = "SqliteHelper";
+	/** テンプレートクラス。*/
 	private BeanSqliteHelperTemplate template;
 	/***
 	 * コンストラクタ。
@@ -59,14 +77,19 @@ public class SqliteBeanScanner extends ScannerBase {
     	template.setTableName(tableName);
     	return super.visitType(e, p);
     }
+    /**
+     * フィールド処理。
+     */
     @Override
     public Void visitVariable(VariableElement e, Void p) {
+    	// Columnアノテーションがついている場合処理を行う
     	Column column = e.getAnnotation(Column.class);
     	if (column != null) {
     		String fldType = e.asType().toString();
     		String fldName = e.getSimpleName().toString();
     		String columnName = column.name().isEmpty() ? decamelize(fldName) : column.name();
     		String columnType = column.type();
+    		// カラムタイプが指定されない場合フィールドの型から判定する
     		if (columnType.isEmpty()) {
     			if ("int".equals(fldType) 
 					|| "java.lang.Integer".equals(fldType)
@@ -90,6 +113,10 @@ public class SqliteBeanScanner extends ScannerBase {
         return super.visitVariable(e, p);
     }
     
+    /**
+     * Bean用テンプレート処理。
+     * @author suppi~
+     */
     private class BeanSqliteHelperTemplate extends TemplateBase {
     	@Override
     	public String getTemplateName() {
