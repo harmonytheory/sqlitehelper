@@ -50,7 +50,13 @@ public class @{sourceName} extends @{helperName}<@{beanName}> {
 		selection.append("@{primary.name}=").append("@if{primary.type == "String"}'?'@else{}?@end{}");
 		@end{'selection.append(", ");'}
 		Cursor c = query(TABLE, COLUMNS, selection.toString(), new String[]{@foreach{primary : primaryList}String.valueOf(@{primary.name})@end{', '}}, null, null, order, limit);
-		return cursorToBean(c);
+		
+		if (c.getCount() > 0) {
+			if (c.moveToFirst()) {
+				return cursorToBean(c);
+			}
+		}
+		return null;
 	}
 	
 	@Override

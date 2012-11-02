@@ -27,9 +27,11 @@ public abstract class ${sourceName}<T> extends @{helperBaseName} {
 	public List<T> selectAll(String order) {
 		Cursor c = query(getTable(), getColumns(), null, null, null, null, order, null);
 		List<T> list = new ArrayList<T>();
-		if (c.moveToFirst()) {
-			while (c.moveToNext()) {
-				list.add(cursorToBean(c));
+		if (c.getCount() > 0) {
+			if (c.moveToFirst()) {
+				do {
+					list.add(cursorToBean(c));
+				} while (c.moveToNext());
 			}
 		}
 		return list;
